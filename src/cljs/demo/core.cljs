@@ -2,6 +2,8 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [taoensso.sente :as sente]
+            [system.components.sente :refer [new-channel-socket-client]]
+            [com.stuartsierra.component :as component]
             [ankha.core :as ankha]
             [cljs.core.match :refer-macros [match]]
             [ajax.core :refer [GET POST]]
@@ -34,13 +36,10 @@
 (def flash #(om/ref-cursor (:flash (om/root-cursor app-state))))
 
 ;; sente
-(let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket! "/chsk" ; Note the same path as before
-       {:type :auto})]
-  (def chsk       chsk)
-  (def ch-chsk    ch-recv) ; ChannelSocket's receive channel
-  (def chsk-send! send-fn) ; ChannelSocket's send API fn
-  (def chsk-state state))
+
+(def sente-client (component/start (new-channel-socket-client)))
+(def chsk-send! (:chsk-send! sente-client))
+(def chsk-state (:chsk-state sente-client))
 
 (defn event-handler [event data owner]
   (.log js/console "Event: %s" (pr-str event))
@@ -50,7 +49,7 @@
                                      (om/set-state! owner :session :unauthenticated)
                                      (om/set-state! owner :session :authenticated)))
          [[:chsk/handshake _]] (do (.log js/console "handshake"))
-         [[:chsk/recv [:wallofmusic/flash payload]]] (do (.log js/console "Flash:" payload)
+         [[:chsk/recv [:demo/flash payload]]] (do (.log js/console "Flash:" payload)
                                                         (f/info flash (:message payload)))
          [[:chsk/recv payload]] (.log js/console "Push event from server: %s" (pr-str payload))
          :else (.log js/console "Unmatched event: %s" event)))
@@ -59,7 +58,7 @@
   "Handle inbound events."
   [data owner]
   (go-loop [] 
-    (let [{:as ev-msg :keys [event]} (<! ch-chsk)]
+    (let [{:as ev-msg :keys [event]} (<! (:ch-chsk sente-client))]
       (event-handler event data owner)
       (recur))))
 ;; sente
@@ -96,7 +95,7 @@
     (render-state [_ state]
       (let [left [["FAQ" #(.setToken history "/faq")]
                   ["Contact" #(set! (.. js/window -location -href) "mailto:daniel.szmulewicz@gmail.com?&subject=Demo")]]]
-        (h/header data owner {:brand ["Wall of Music" #(.setToken history "/")]
+        (h/header data owner {:brand ["system demo" #(.setToken history "/")]
                               :left left
                               :authenticated [(dom/a #js {:href "/logout"} "Sign out")]
                               :unauthenticated [(om/build login data)]})))))

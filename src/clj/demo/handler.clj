@@ -21,7 +21,7 @@
   (-> site-defaults
       (assoc-in [:static :resources] "/")))
 
-(defn sente-handler [{{db-spec :db-spec} :db}] ""
+(defn sente-handler [{{db-spec :db-spec} :db}]
   (fn [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
     (let [session (:session ring-req)
           headers (:headers ring-req)
