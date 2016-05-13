@@ -42,7 +42,6 @@
 (require
  '[adzerk.boot-cljs      :refer [cljs]]
  '[adzerk.boot-reload    :refer [reload]]
- '[reloaded.repl :refer [init start stop go reset]]
  '[demo.systems :refer [dev-system]]
  '[environ.boot :refer [environ]]
  '[system.boot :refer [system run]]
