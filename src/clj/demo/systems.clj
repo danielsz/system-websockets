@@ -2,9 +2,7 @@
   (:require
    [demo.handler :refer [ring-handler site sente-handler]]
    [demo.middleware
-    [not-found :refer [wrap-not-found]]
-    [autologin :refer [autologin]]]
-   [demo.persistence :refer [create-tables!]]
+    [not-found :refer [wrap-not-found]]]
    [com.stuartsierra.component :as component]
    [ring.middleware.defaults :refer [wrap-defaults]]
    [taoensso.sente.server-adapters.immutant :refer (sente-web-server-adapter)]
@@ -32,8 +30,7 @@
     :routes (component/using
             (new-endpoint ring-handler)
             [:db])
-    :middleware (new-middleware {:middleware [autologin
-                                              [wrap-defaults :defaults]
+    :middleware (new-middleware {:middleware [[wrap-defaults :defaults]
                                               [wrap-not-found :not-found]]
                                  :defaults site
                                  :not-found  "<h2>The requested page does not exist.</h2>"})

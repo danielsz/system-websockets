@@ -37,7 +37,9 @@
 
 ;; sente
 
+
 (def sente-client (component/start (new-channel-socket-client)))
+(def chsk       (:chsk sente-client))
 (def chsk-send! (:chsk-send! sente-client))
 (def chsk-state (:chsk-state sente-client))
 
@@ -47,8 +49,9 @@
          [[:chsk/state state]] (do (.log js/console "state change: %s" (pr-str state))
                                    (if (= (:uid state) :taoensso.sente/nil-uid)
                                      (om/set-state! owner :session :unauthenticated)
-                                     (om/set-state! owner :session :authenticated)))
-         [[:chsk/handshake _]] (do (.log js/console "handshake"))
+                                     (do (om/set-state! owner :session :authenticated)
+                                         (om/transact! data :uid (fn [_] (:uid state))))))
+         [[:chsk/handshake _]] (f/info flash "Sente handshake")
          [[:chsk/recv [:demo/flash payload]]] (do (.log js/console "Flash:" payload)
                                                         (f/info flash (:message payload)))
          [[:chsk/recv payload]] (.log js/console "Push event from server: %s" (pr-str payload))
@@ -72,16 +75,16 @@
       "login")
     om/IRender
     (render [_]
-      (dom/a #js {:href "/google/login"
+      (dom/a #js {:href "signin"
                   :onClick (fn [e]
                              (let [url (.-href (.-target e))
                                    csrf-token (:csrf-token @chsk-state)]
                                (.preventDefault e)
                                (POST url
                                    {:headers {"X-CSRF-Token" csrf-token}
-                                    :handler (fn [response] (set! (.-location js/window) (str response))) 
+                                    :handler (fn [response] (sente/chsk-reconnect! chsk))
                                     :error-handler (fn [{:keys [status status-text]}]
-                                                     (.log js/console (str "Error: " status " " status-text)))})))}
+                                                     (f/alert flash (str status ": " status-text)))})))}
              "Sign in"))))
 
 (defn header
@@ -141,4 +144,5 @@
           :tx-listen (fn [{:keys [path old-value new-value old-state new-state tag] :as tx-data}
                          root-cursor]
                        (match [path]
+                              [[:uid]] (js/setTimeout #(f/bless flash (str "Welcome " new-value)) 1000)
                          :else (.log js/console (str "no match with cursor path " path))))})
