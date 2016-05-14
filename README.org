@@ -1,11 +1,5 @@
 ** Definition
-This is a case study project for the [[https://github.com/danielsz/system][system]] library. 
-
-It demonstrates how to wire a system with Sente.
-
-The UI is composed of Om components, including a notification system.
-
-A rudimentary login procedure is shown here to help you extend your own.
+This is a case study project for the [[https://github.com/danielsz/system][system]] library. It demonstrates how to wire a system with Sente. The UI is composed of Om components, including a notification system. A rudimentary login procedure is shown here to help you extend your own.
 ** Usage
 
 #+BEGIN_SRC sh
@@ -15,4 +9,4 @@ $ boot dev
 The web server is listening on port 3041. 
 
 ** License
-Copyright © 2009-2015 Daniel.
+Distributed under the [[http://opensource.org/licenses/eclipse-1.0.php][Eclipse Public License]], the same as Clojure.
