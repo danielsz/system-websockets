@@ -49,8 +49,7 @@
   "Run a restartable system in the Repl"
   []
   (comp
-   (environ :env {:http-port "3041"
-                  :redirect-url "http://localhost:3011/github"})
+   (environ :env {:http-port "3041"})
    (watch :verbose true)
    (system :sys #'dev-system :auto true :files ["handler.clj" "html.clj"])
    (reload)
