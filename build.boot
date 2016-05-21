@@ -34,8 +34,7 @@
                  [org.danielsz/cljs-utils "0.1.0-SNAPSHOT"]
                  [org.omcljs/om "0.9.0"]
                  [org.danielsz/om-flash-bootstrap "0.1.0-SNAPSHOT"]
-                 [org.danielsz/om-header-bootstrap "0.1.0-SNAPSHOT"]
-                 [cljsjs/bootstrap "3.3.6-0"]])
+                 [org.danielsz/om-header-bootstrap "0.1.0-SNAPSHOT"]])
 
 (require
  '[adzerk.boot-cljs      :refer [cljs]]
