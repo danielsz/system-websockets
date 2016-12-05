@@ -1,18 +1,17 @@
 (set-env!
  :source-paths   #{"src/clj" "src/cljs"}
  :resource-paths #{"resources"}
- :dependencies '[[adzerk/boot-cljs "1.7.228-1" :scope "test"]
-                 [adzerk/boot-reload "0.4.12" :scope "test"]
+ :dependencies '[[adzerk/boot-cljs "1.7.228-2" :scope "test"]
+                 [adzerk/boot-reload "0.4.13" :scope "test"]
                  [org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.229"]
+                 [org.clojure/clojurescript "1.9.293"]
                  [org.clojure/tools.nrepl "0.2.12"]
                  [org.clojure/tools.reader "1.0.0-beta3"]
                  [org.danielsz/system "0.3.2-SNAPSHOT"]
                  [com.taoensso/sente "1.8.1"]
                  [org.clojure/core.match "0.3.0-alpha4"]
                  [org.immutant/web "2.1.5"]
-                 [ring/ring-core "1.4.0"]
-                 [com.novemberain/monger "3.0.2"]
+                 [ring/ring-core "1.5.0"]
                  [ring/ring-defaults "0.2.0"]
                  [ring-middleware-format "0.7.0"]
                  [org.clojure/core.match "0.3.0-alpha4"]

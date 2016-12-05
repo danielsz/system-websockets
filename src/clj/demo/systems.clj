@@ -1,10 +1,11 @@
 (ns demo.systems
   (:require
-   [demo.handler :refer [ring-handler site sente-handler]]
+   [demo.handler :refer [ring-handler sente-handler]]
    [demo.middleware
     [not-found :refer [wrap-not-found]]]
    [com.stuartsierra.component :as component]
-   [ring.middleware.defaults :refer [wrap-defaults]]
+   [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+   [ring.middleware.format :refer [wrap-restful-format]]
    [taoensso.sente.server-adapters.immutant :refer (sente-web-server-adapter)]
    (system.components
     [immutant-web :refer [new-web-server]]
@@ -15,6 +16,10 @@
     [handler :refer [new-handler]]
     [middleware :refer [new-middleware]])
    [environ.core :refer [env]]))
+
+(def site
+  (-> site-defaults
+      (assoc-in [:static :resources] "/")))
 
 (defn dev-system
   "Assembles and returns components for a base application"
@@ -27,16 +32,17 @@
     :sente-endpoint (component/using
                      (new-endpoint sente-routes)
                      [:sente])
-    :routes (component/using
+    :app-middleware (new-middleware {:middleware [wrap-restful-format]})
+    :app-endpoints (component/using
             (new-endpoint ring-handler)
-            [:db])
+            [:db :app-middleware])
     :middleware (new-middleware {:middleware [[wrap-defaults :defaults]
                                               [wrap-not-found :not-found]]
                                  :defaults site
                                  :not-found  "<h2>The requested page does not exist.</h2>"})
     :handler (component/using
              (new-handler)
-             [:sente-endpoint :routes :middleware])
+             [:sente-endpoint :app-endpoints :middleware])
     :http (component/using
           (new-web-server (Integer. (env :http-port)))
           [:handler])))

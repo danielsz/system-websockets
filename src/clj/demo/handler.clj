@@ -5,24 +5,17 @@
    [compojure.core :refer [routes GET POST ANY]]
    [compojure.route :as route]
    [ring.util.response :as util]
-   [ring.middleware.defaults :refer [site-defaults]]
-   [ring.middleware.format :refer [wrap-restful-format]]
    [clojure.core.match :as match :refer (match)]
    [environ.core :refer [env]]))
 
 (defn ring-handler [{db :db}]
-  (-> (routes
-       (GET "/" [] (html/index))
-       (POST "/signin" req (let [session (assoc (:session req) :uid "John Doe")]
-                             (-> (util/response "John Doe")
-                                 (assoc :session session))))
-       (GET "/status" req (helper/status req))
-       (GET "/logout" req (helper/logout req)))
-      wrap-restful-format))
-
-(def site
-  (-> site-defaults
-      (assoc-in [:static :resources] "/")))
+  (routes
+   (GET "/" [] (html/index))
+   (POST "/signin" req (let [session (assoc (:session req) :uid "John Doe")]
+                         (-> (util/response "John Doe")
+                             (assoc :session session))))
+   (GET "/status" req (helper/status req))
+   (GET "/logout" req (helper/logout req))))
 
 (defn sente-handler [{db :db}]
   (fn [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
