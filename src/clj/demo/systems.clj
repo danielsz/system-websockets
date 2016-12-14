@@ -36,10 +36,8 @@
     :app-endpoints (component/using
             (new-endpoint ring-handler)
             [:db :app-middleware])
-    :middleware (new-middleware {:middleware [[wrap-defaults :defaults]
-                                              [wrap-not-found :not-found]]
-                                 :defaults site
-                                 :not-found  "<h2>The requested page does not exist.</h2>"})
+    :middleware (new-middleware {:middleware [[wrap-defaults site]
+                                              [wrap-not-found "<h2>The requested page does not exist.</h2>"]]})
     :handler (component/using
              (new-handler)
              [:sente-endpoint :app-endpoints :middleware])
