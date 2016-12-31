@@ -44,18 +44,16 @@
 (def chsk-state (:chsk-state sente-client))
 
 (defn event-handler [event data owner]
-  (.log js/console "Event: %s" (pr-str event))
+  (println "Event:" (pr-str event))
   (match [event]
-         [[:chsk/state state]] (do (.log js/console "state change: %s" (pr-str state))
-                                   (if (= (:uid state) :taoensso.sente/nil-uid)
-                                     (om/set-state! owner :session :unauthenticated)
-                                     (do (om/set-state! owner :session :authenticated)
-                                         (om/transact! data :uid (fn [_] (:uid state))))))
+         [[:chsk/state [old-state new-state]]] (if (= (:uid new-state) :taoensso.sente/nil-uid)
+                                                 (om/set-state! owner :session :unauthenticated)
+                                                 (do (om/set-state! owner :session :authenticated)
+                                                     (om/transact! data :uid (fn [_] (:uid new-state)))))
          [[:chsk/handshake _]] (f/info flash "Sente handshake")
-         [[:chsk/recv [:demo/flash payload]]] (do (.log js/console "Flash:" payload)
-                                                        (f/info flash (:message payload)))
-         [[:chsk/recv payload]] (.log js/console "Push event from server: %s" (pr-str payload))
-         :else (.log js/console "Unmatched event: %s" event)))
+         [[:chsk/recv [:demo/flash payload]]] (f/info flash (:message payload))
+         [[:chsk/recv payload]] (println "Push event from server:" (pr-str payload))
+         :else (println "Unmatched event:" event)))
 
 (defn event-loop
   "Handle inbound events."
@@ -145,4 +143,4 @@
                          root-cursor]
                        (match [path]
                               [[:uid]] (js/setTimeout #(f/bless flash (str "Welcome " new-value)) 1000)
-                         :else (.log js/console (str "no match with cursor path " path))))})
+                         :else (println "no match with cursor path " path)))})
