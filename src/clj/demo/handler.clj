@@ -18,12 +18,11 @@
    (GET "/logout" [] helper/logout)))
 
 (defn sente-handler [{db :db}]
-  (fn [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+  (fn [{:as ev-msg :keys [event id ?data send-fn ?reply-fn uid ring-req client-id]}]
     (let [session (:session ring-req)
           headers (:headers ring-req)
-          uid     (:uid session)
           [id data :as ev] event]
 
-      (println event "\n" session)
+      (println (:uri ring-req) event uid)
       (match [id data]
              :else nil))))
