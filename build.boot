@@ -7,7 +7,7 @@
                  [org.clojure/clojurescript "1.9.293"]
                  [org.clojure/tools.nrepl "0.2.12"]
                  [org.clojure/tools.reader "1.0.0-beta3"]
-                 [org.danielsz/system "0.3.2-SNAPSHOT"]
+                 [org.danielsz/system "0.4.0"]
                  [com.taoensso/sente "1.11.0"]
                  [org.clojure/core.match "0.3.0-alpha4"]
                  [org.immutant/web "2.1.5"]
